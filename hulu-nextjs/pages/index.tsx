@@ -19,14 +19,14 @@ const Home: NextPage = () => {
       setLoading(true);
       try {
         const response = await fetch(
-          `https://www.omdbapi.com/?api_key=${process.env.REACT_APP_API_KEY}${value}`
+          `https://www.omdbapi.com?apikey=c24c2c7d&s=${value}`
         );
         const data = await response.json();
         if (data.Response === "True") {
           setData(data.Search || data);
           setError({ show: false, msg: "" });
         } else {
-          setError({ show: true, msg: "data.Error" });
+          setError({ show: true, msg: data.Error });
         }
         setLoading(false);
       } catch (err) {
@@ -50,7 +50,7 @@ const Home: NextPage = () => {
         value={value}
         onChange={handleChangeSearch}
       />
-      {error.show && <div className="error">{error.msg}</div>}
+      {error.show && <div className="error ml-20">{error.msg}</div>}
       <Movies isLoading={loading} movies={data} />
     </div>
   );
