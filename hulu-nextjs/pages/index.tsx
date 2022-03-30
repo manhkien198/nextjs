@@ -1,6 +1,6 @@
 import type { GetStaticProps, GetStaticPropsContext, NextPage } from "next";
 import Head from "next/head";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Header from "../components/Header";
 import Movies from "../components/Movies";
 import Nav from "../components/Nav";
@@ -10,9 +10,13 @@ const Home: NextPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState({ show: false, msg: "" });
   const [data, setData] = useState(null);
-
+  const ref = useRef(null);
   const handleChangeSearch = (e: any) => {
-    setValue(e.target.value);
+    const keyword = e.target.value;
+    if (ref.current) {
+      clearTimeout(ref.current);
+    }
+    ref.current = setTimeout(() => setValue(keyword), 1000);
   };
   useEffect(() => {
     (async () => {
@@ -47,7 +51,6 @@ const Home: NextPage = () => {
         type="text"
         placeholder="Enter your movie name"
         className="mt-5 ml-20 p-2 rounded w-100 form-control"
-        value={value}
         onChange={handleChangeSearch}
       />
       {error.show && <div className="error ml-20">{error.msg}</div>}
