@@ -1,23 +1,42 @@
+const API_KEY = "6563c3cef5083ff24c5f426a28004f38";
 export default {
-  fetchTrending: {
-    title: "Trending",
-  },
-  fetchTopRated: {
-    title: "Top Rated",
-  },
   fetchActionsMovies: {
     title: "Action",
+    url: `list/28?api_key=${API_KEY}&language=en-US`,
   },
+
   fetchComedyMovies: {
     title: "Comedy",
+    url: `list/35?api_key=${API_KEY}&language=en-US`,
   },
   fetchHorrorMovies: {
     title: "Horror",
+    url: `list/27?api_key=${API_KEY}&language=en-US`,
   },
-  fetchRomanceMovies: {
-    title: "Top Rated",
-  },
+
   fetchMystery: {
     title: "Mystery",
+    url: `list/9648?api_key=${API_KEY}&language=en-US`,
+  },
+  fetchWar: {
+    title: "War",
+    url: `list/10752?api_key=${API_KEY}&language=en-US`,
+  },
+
+  fetchScience: {
+    title: "Science Fiction",
+    url: `list/878?api_key=${API_KEY}&language=en-US`,
+  },
+  fetchHistory: {
+    title: "History",
+    url: `list/36?api_key=${API_KEY}&language=en-US`,
+  },
+  fetchFantasy: {
+    title: "Fantasy",
+    url: `list/14?api_key=${API_KEY}&language=en-US`,
+  },
+  fetchDocumentary: {
+    title: "Documentary",
+    url: `list/99?api_key=${API_KEY}&language=en-US`,
   },
 };

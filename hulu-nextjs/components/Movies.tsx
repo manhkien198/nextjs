@@ -3,15 +3,13 @@ import { Movie } from "../models";
 
 export interface MoviesProps {
   movies: Movie[];
-  isLoading: boolean;
 }
 
-export default function Movies({ isLoading, movies }: MoviesProps) {
+export default function Movies({ movies }: MoviesProps) {
   const url =
     "https://upload.wikimedia.org/wikipedia/commons/f/fc/No_picture_available.png";
-
-  if (isLoading) {
-    return <div className="loading"></div>;
+  if (!movies.length) {
+    return <div>No film</div>;
   }
   return (
     <section className="movies">
@@ -22,7 +20,7 @@ export default function Movies({ isLoading, movies }: MoviesProps) {
           <Link href={`/movies/${id}`} key={id} passHref>
             <article className="movie">
               <img
-                src={`https://image.tmdb.org/t/p/w500/${poster}`}
+                src={poster ? `https://image.tmdb.org/t/p/w500/${poster}` : url}
                 alt={title}
               />
               <div className="movie-info">
