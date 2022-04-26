@@ -16,15 +16,18 @@ export default function Movies({ isLoading, movies }: MoviesProps) {
   return (
     <section className="movies">
       {movies?.map((movie) => {
-        const { imdbID: id, Poster: poster, Title: title, Year: year } = movie;
+        const { id, poster_path: poster, title, overview } = movie;
 
         return (
           <Link href={`/movies/${id}`} key={id} passHref>
             <article className="movie">
-              <img src={poster === "N/A" ? url : poster} alt={title} />
+              <img
+                src={`https://image.tmdb.org/t/p/w500/${poster}`}
+                alt={title}
+              />
               <div className="movie-info">
                 <h4 className="title">{title}</h4>
-                <p>{year}</p>
+                <p className="truncate">{overview}</p>
               </div>
             </article>
           </Link>

@@ -1,15 +1,18 @@
 import type { GetStaticProps, GetStaticPropsContext, NextPage } from "next";
 import Head from "next/head";
 import { useEffect, useRef, useState } from "react";
+import useSWR from "swr";
 import Header from "../components/Header";
 import Movies from "../components/Movies";
 import Nav from "../components/Nav";
+
 export interface HomeProps {}
 const Home: NextPage = () => {
   const [value, setValue] = useState("batman");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState({ show: false, msg: "" });
   const [data, setData] = useState(null);
+  const [id, setId] = useState(28);
   const ref = useRef(null);
   const handleChangeSearch = (e: any) => {
     const keyword = e.target.value;
@@ -18,26 +21,48 @@ const Home: NextPage = () => {
     }
     ref.current = setTimeout(() => setValue(keyword), 1000);
   };
+  const baseUrl = "https://api.themoviedb.org/3/";
+  const handleClickCate = (id) => {
+    setId(id);
+  };
+
+  const navProps = {
+    setId: setId,
+    handleClickCate: handleClickCate,
+  };
+  const fetchById = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(
+        `${baseUrl}search/movie?api_key=6563c3cef5083ff24c5f426a28004f38&language=en-US&page=1&query=${value}`
+      );
+      const data = await response.json();
+      setData(data.items);
+      setLoading(false);
+    } catch (err) {
+      setError({ show: true, msg: err });
+    }
+  };
+  const fetchByQuery = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(
+        `${baseUrl}list/${id}?api_key=6563c3cef5083ff24c5f426a28004f38&language=en-US`
+      );
+      const data = await response.json();
+      setData(data.items);
+      setLoading(false);
+    } catch (err) {
+      setError({ show: true, msg: err });
+    }
+  };
   useEffect(() => {
-    (async () => {
-      setLoading(true);
-      try {
-        const response = await fetch(
-          `https://www.omdbapi.com?apikey=c24c2c7d&s=${value}`
-        );
-        const data = await response.json();
-        if (data.Response === "True") {
-          setData(data.Search || data);
-          setError({ show: false, msg: "" });
-        } else {
-          setError({ show: true, msg: data.Error });
-        }
-        setLoading(false);
-      } catch (err) {
-        console.log(err);
-      }
-    })();
+    fetchById();
+  }, [id]);
+  useEffect(() => {
+    fetchByQuery();
   }, [value]);
+
   return (
     <div>
       <Head>
@@ -46,7 +71,7 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Header />
-      <Nav />
+      <Nav {...navProps} />
       <input
         type="text"
         placeholder="Enter your movie name"
