@@ -1,13 +1,65 @@
+import debounce from "lodash.debounce";
+import { GetStaticPaths, GetStaticProps, GetStaticPropsContext } from "next";
 import Head from "next/head";
+import { useRouter } from "next/router";
+import { useCallback, useEffect, useState } from "react";
 import Header from "../components/Header";
 import Movies, { MoviesProps } from "../components/Movies";
 import Nav from "../components/Nav";
 import request from "../ultis/request";
+
 export interface HomeProps {
-  result: MoviesProps;
+  movie: MoviesProps;
 }
-const Home = ({ result }) => {
-  console.log("result :", result);
+const Home = ({ movie }) => {
+  const [data, setData] = useState(movie);
+  const [value, setValue] = useState(null);
+  const router = useRouter();
+  const handleChangeSearch = (e: any) => {
+    setValue(e.target.value);
+  };
+  const debouncedChangeHandler = useCallback(
+    debounce(handleChangeSearch, 300),
+    []
+  );
+  const fetchBySearch = async () => {
+    try {
+      const res = await fetch(
+        `https://api.themoviedb.org/3/search/movie?api_key=6563c3cef5083ff24c5f426a28004f38&language=en-US&page=1${
+          value ? `&query=${value}` : ""
+        }`
+      );
+      const data = await res.json();
+      setData(data.results);
+    } catch (error) {}
+  };
+  useEffect(() => {
+    router.push({
+      pathname: router.pathname,
+      query: {
+        query: value,
+      },
+    });
+    if (value !== null) {
+      fetchBySearch();
+    }
+  }, [value]);
+  const fetchCategory = async () => {
+    try {
+      const res = await fetch(
+        `https://api.themoviedb.org/3/${request[`${router.query?.genre}`].url}`
+      );
+      const items = await res.json();
+      console.log(items.items);
+      setData([...items.items]);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    fetchCategory();
+  }, [router.query]);
+
   return (
     <div>
       <Head>
@@ -21,23 +73,25 @@ const Home = ({ result }) => {
         type="text"
         placeholder="Enter your movie name"
         className="mt-5 ml-20 p-2 rounded w-100 form-control"
+        onChange={debouncedChangeHandler}
       />
-      <Movies movies={result} />
+      <Movies movies={data} />
     </div>
   );
 };
 
 export default Home;
-export async function getServerSideProps(context) {
-  const genre = context.query.genre;
-  const req = await fetch(
-    `https://api.themoviedb.org/3/${
-      request[genre]?.url || request.fetchActionsMovies.url
-    }`
-  ).then((res) => res.json());
+
+export const getStaticProps: GetStaticProps = async (
+  context: GetStaticPropsContext
+) => {
+  const res = await fetch(
+    "https://api.themoviedb.org/3/list/28?api_key=6563c3cef5083ff24c5f426a28004f38&language=en-US"
+  );
+  const data = await res.json();
   return {
     props: {
-      result: req.items,
+      movie: data.items,
     },
   };
-}
+};

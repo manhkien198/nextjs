@@ -12,7 +12,9 @@ export default function Nav() {
           <button
             key={key}
             className="last:pr-24 cursor-pointer transiton duration-100 transform hover:scale-125 hover:text-white  active:text-red-500"
-            onClick={() => router.push(`?genre=${key}`)}
+            onClick={() => {
+              router.push(`?genre=${key}`);
+            }}
           >
             {title}
           </button>

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { Movie } from "../models";
 
 export interface MoviesProps {
@@ -8,24 +9,26 @@ export interface MoviesProps {
 export default function Movies({ movies }: MoviesProps) {
   const url =
     "https://upload.wikimedia.org/wikipedia/commons/f/fc/No_picture_available.png";
-  if (!movies.length) {
-    return <div>No film</div>;
+  if (!movies?.length) {
+    return <div className="text-3xl">No film</div>;
   }
   return (
     <section className="movies">
       {movies?.map((movie) => {
-        const { id, poster_path: poster, title, overview } = movie;
-
         return (
-          <Link href={`/movies/${id}`} key={id} passHref>
+          <Link href={`/movies/${movie.id}`} key={movie.id} passHref>
             <article className="movie">
               <img
-                src={poster ? `https://image.tmdb.org/t/p/w500/${poster}` : url}
-                alt={title}
+                src={
+                  movie?.poster_path
+                    ? `https://image.tmdb.org/t/p/w500/${movie?.poster_path}`
+                    : url
+                }
+                alt={movie?.title}
               />
               <div className="movie-info">
-                <h4 className="title">{title}</h4>
-                <p className="truncate">{overview}</p>
+                <h4 className="title">{movie?.title}</h4>
+                <p className="truncate">{movie?.overview}</p>
               </div>
             </article>
           </Link>
