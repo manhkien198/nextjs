@@ -50,7 +50,6 @@ const Home = ({ movie }) => {
         `https://api.themoviedb.org/3/${request[`${router.query?.genre}`].url}`
       );
       const items = await res.json();
-      console.log(items.items);
       setData([...items.items]);
     } catch (error) {
       console.log(error);
